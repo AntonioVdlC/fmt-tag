@@ -150,7 +150,7 @@ describe("fmt-tag", () => {
         const name = "Alice";
         const date = new Date(1234567890);
 
-        const expected = "Alice is joining the meeting at 07:56.";
+        const expected = "Alice is joining the meeting at 06:56.";
         const actual = fmt`${name} is joining the meeting at ${date}:t.`;
 
         expect(actual).toEqual(expected);
@@ -160,7 +160,7 @@ describe("fmt-tag", () => {
         const name = "Alice";
         const date = new Date(1234567890);
 
-        const expected = "Alice is joining the meeting at 07:56.";
+        const expected = "Alice is joining the meeting at 06:56.";
         const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm).`;
 
         expect(actual).toEqual(expected);
@@ -170,7 +170,7 @@ describe("fmt-tag", () => {
         const name = "Alice";
         const date = new Date(1234567890);
 
-        const expected = "Alice is joining the meeting at 07:56 am.";
+        const expected = "Alice is joining the meeting at 06:56 am.";
         const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm aa).`;
 
         expect(actual).toEqual(expected);
@@ -180,7 +180,7 @@ describe("fmt-tag", () => {
         const name = "Alice";
         const date = new Date(1234567890);
 
-        const expected = "Alice is joining the meeting at 07:56:07.";
+        const expected = "Alice is joining the meeting at 06:56:07.";
         const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm:ss).`;
 
         expect(actual).toEqual(expected);
@@ -190,7 +190,7 @@ describe("fmt-tag", () => {
         const name = "Alice";
         const date = new Date(1234567890);
 
-        const expected = "Alice is joining the meeting at 07:56:07 am.";
+        const expected = "Alice is joining the meeting at 06:56:07 am.";
         const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm:ss aa).`;
 
         expect(actual).toEqual(expected);
@@ -200,7 +200,7 @@ describe("fmt-tag", () => {
         const name = "Alice";
         const date = new Date(1234567890);
 
-        const expected = "Alice is joining the meeting at 07:56:07 CET.";
+        const expected = "Alice is joining the meeting at 06:56:07 UTC.";
         const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm:ss TZ).`;
 
         expect(actual).toEqual(expected);
@@ -211,7 +211,7 @@ describe("fmt-tag", () => {
         const date = new Date(1234567890);
 
         const expected =
-          "Alice is joining the meeting at 07:56:07 Central European Standard Time.";
+          "Alice is joining the meeting at 06:56:07 Coordinated Universal Time.";
         const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm:ss TZ+).`;
 
         expect(actual).toEqual(expected);
