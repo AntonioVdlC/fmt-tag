@@ -5,6 +5,10 @@ describe("fmt-tag", () => {
     expect(typeof fmt).toBe("function");
   });
 
+  it("has a .use() field which is a function", () => {
+    expect(typeof fmt.use).toBe("function");
+  });
+
   it("correctly does string interpolation in template literals", () => {
     const name = "Alice";
     const number = 42;
@@ -15,44 +19,235 @@ describe("fmt-tag", () => {
     expect(actual).toEqual(expected);
   });
 
-  it("correctly formats string values", () => {
-    const name = "Alice";
-    const number = 42;
+  describe(".use(locale)", () => {
+    it("properly set a user inputed locale", () => {
+      const name = "Alice";
+      const number = 42;
+      const price = 20;
 
-    const expected = "Alice has 42 oranges!";
-    const actual = fmt`${name}:s has ${number}:s oranges!`;
+      fmt.use("en-UK");
 
-    expect(actual).toEqual(expected);
+      const expectedENUK = "Alice has 42 oranges worth US$20.00!";
+      const actualENUK = fmt`${name}:s has ${number}:n oranges worth ${price}:c(USD)!`;
+
+      expect(actualENUK).toEqual(expectedENUK);
+
+      fmt.use("en-US");
+
+      const expectedENUS = "Alice has 42 oranges worth $20.00!";
+      const actualENUS = fmt`${name}:s has ${number}:n oranges worth ${price}:c(USD)!`;
+
+      expect(actualENUS).toEqual(expectedENUS);
+    });
   });
 
-  it("correctly formats number values (with 2 digits)", () => {
-    const name = "Alice";
-    const number = 42;
+  describe("formatters", () => {
+    beforeAll(() => {
+      fmt.use("en-UK");
+    });
 
-    const expected = "Alice has 42.00 oranges!";
-    const actual = fmt`${name}:s has ${number}:n(2) oranges!`;
+    describe(":c", () => {
+      it("correctly formats currencies", () => {
+        const name = "Alice";
+        const number = 42;
+        const price = 20;
 
-    expect(actual).toEqual(expected);
-  });
+        const expected = "Alice has 42 oranges worth US$20.00!";
+        const actual = fmt`${name}:s has ${number}:n oranges worth ${price}:c(USD)!`;
 
-  it("correctly formats currencies", () => {
-    const name = "Alice";
-    const number = 42;
-    const price = 20;
+        expect(actual).toEqual(expected);
+      });
+    });
 
-    const expected = "Alice has 42 oranges worth US$20.00!";
-    const actual = fmt`${name}:s has ${number}:n oranges worth ${price}:c(USD)!`;
+    describe(":d", () => {
+      it("returns the short date by default", () => {
+        const name = "Alice";
+        const date = new Date("01-01-1970");
 
-    expect(actual).toEqual(expected);
-  });
+        const expected = "Alice was born on 01/01/1970.";
+        const actual = fmt`${name} was born on ${date}:d.`;
 
-  it("defaults to string if formatter not defined", () => {
-    const name = "Alice";
-    const number = 42;
+        expect(actual).toEqual(expected);
+      });
 
-    const expected = "Alice has 42 oranges!";
-    const actual = fmt`${name} has ${number}:t oranges!`;
+      it("returns the short date when passed `DD-MM-YYYY`", () => {
+        const name = "Alice";
+        const date = new Date("01-01-1970");
 
-    expect(actual).toEqual(expected);
+        const expected = "Alice was born on 01/01/1970.";
+        const actual = fmt`${name} was born on ${date}:d(DD-MM-YYYY).`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns the medium date when passed `DD-mm-YYYY`", () => {
+        const name = "Alice";
+        const date = new Date("01-01-1970");
+
+        const expected = "Alice was born on 1 Jan 1970.";
+        const actual = fmt`${name} was born on ${date}:d(DD-mm-YYYY).`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns the long date when passed `DD-mmm-YYYY`", () => {
+        const name = "Alice";
+        const date = new Date("01-01-1970");
+
+        const expected = "Alice was born on 1 January 1970.";
+        const actual = fmt`${name} was born on ${date}:d(DD-mmm-YYYY).`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns the full date when passed `ddd-mmm-YYYY`", () => {
+        const name = "Alice";
+        const date = new Date("01-01-1970");
+
+        const expected = "Alice was born on Thursday, 1 January 1970.";
+        const actual = fmt`${name} was born on ${date}:d(ddd-mmm-YYYY).`;
+
+        expect(actual).toEqual(expected);
+      });
+    });
+
+    describe(":n", () => {
+      it("correctly formats number values (with 2 digits)", () => {
+        const name = "Alice";
+        const number = 42;
+
+        const expected = "Alice has 42.00 oranges!";
+        const actual = fmt`${name}:s has ${number}:n(2) oranges!`;
+
+        expect(actual).toEqual(expected);
+      });
+    });
+
+    describe(":s", () => {
+      it("correctly formats string values", () => {
+        const name = "Alice";
+        const number = 42;
+
+        const expected = "Alice has 42 oranges!";
+        const actual = fmt`${name}:s has ${number}:s oranges!`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("defaults to string if formatter not defined", () => {
+        const name = "Alice";
+        const number = 42;
+
+        const expected = "Alice has 42 oranges!";
+        const actual = fmt`${name} has ${number}:z oranges!`;
+
+        expect(actual).toEqual(expected);
+      });
+    });
+
+    describe(":t", () => {
+      it("returns hours and minutes of a date by default", () => {
+        const name = "Alice";
+        const date = new Date(1234567890);
+
+        const expected = "Alice is joining the meeting at 07:56.";
+        const actual = fmt`${name} is joining the meeting at ${date}:t.`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns hours and minutes of a date when passed `HH:mm`", () => {
+        const name = "Alice";
+        const date = new Date(1234567890);
+
+        const expected = "Alice is joining the meeting at 07:56.";
+        const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm).`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns hours and minutes of a date when passed `HH:mm aa`", () => {
+        const name = "Alice";
+        const date = new Date(1234567890);
+
+        const expected = "Alice is joining the meeting at 07:56 am.";
+        const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm aa).`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns hours, minutes, and seconds of a date when passed `HH:mm:ss`", () => {
+        const name = "Alice";
+        const date = new Date(1234567890);
+
+        const expected = "Alice is joining the meeting at 07:56:07.";
+        const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm:ss).`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns hours, minutes, and seconds of a date when passed `HH:mm:ss aa`", () => {
+        const name = "Alice";
+        const date = new Date(1234567890);
+
+        const expected = "Alice is joining the meeting at 07:56:07 am.";
+        const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm:ss aa).`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns the long time form of a date when passed `HH:mm:ss TZ`", () => {
+        const name = "Alice";
+        const date = new Date(1234567890);
+
+        const expected = "Alice is joining the meeting at 07:56:07 CET.";
+        const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm:ss TZ).`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns the full time form of a date when passed `HH:mm:ss TZ+`", () => {
+        const name = "Alice";
+        const date = new Date(1234567890);
+
+        const expected =
+          "Alice is joining the meeting at 07:56:07 Central European Standard Time.";
+        const actual = fmt`${name} is joining the meeting at ${date}:t(HH:mm:ss TZ+).`;
+
+        expect(actual).toEqual(expected);
+      });
+    });
+
+    describe(":w", () => {
+      it("returns the full week day of a date by default", () => {
+        const name = "Alice";
+        const date = new Date("01-01-1970");
+
+        const expected = "Alice was born on a Thursday.";
+        const actual = fmt`${name} was born on a ${date}:w.`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns the short week day of a date when passed `WWDD`", () => {
+        const name = "Alice";
+        const date = new Date("01-01-1970");
+
+        const expected = "Alice was born on a Thursday.";
+        const actual = fmt`${name} was born on a ${date}:w(WWDD).`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns the short week day of a date when passed `WD`", () => {
+        const name = "Alice";
+        const date = new Date("01-01-1970");
+
+        const expected = "Alice was born on a Thu.";
+        const actual = fmt`${name} was born on a ${date}:w(WD).`;
+
+        expect(actual).toEqual(expected);
+      });
+    });
   });
 });
