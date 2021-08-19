@@ -159,6 +159,24 @@ describe("fmt-tag", () => {
 
         expect(actual).toEqual(expected);
       });
+
+      it("returns an uppercase string when passed `U`", () => {
+        const name = "Alice";
+
+        const expected = "Hello, ALICE!";
+        const actual = fmt`Hello, ${name}:s(U)!`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns an lowercase string when passed `U`", () => {
+        const name = "Alice";
+
+        const expected = "Hello, alice!";
+        const actual = fmt`Hello, ${name}:s(l)!`;
+
+        expect(actual).toEqual(expected);
+      });
     });
 
     describe(":t", () => {

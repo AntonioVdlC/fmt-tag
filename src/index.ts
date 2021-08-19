@@ -1,4 +1,3 @@
-// TODO: Add more options to string formatter like uppercase, capitalize, kebab-case, ...
 // TODO: Take care of edge cases (e.g. trying to format a string as a number, ...)
 // TODO: memoize Intl.NumberFormat() formatters
 // TODO: allow for user-created formatters
@@ -84,10 +83,22 @@ const formatters: Record<string, Function> = {
   /**
    * String formatter
    * @param str
+   * @param format
    * @returns
    */
-  s(str: string): string {
-    return str != null ? str.toLocaleString() : "";
+  s(str: string, format: string | null): string {
+    if (!str) {
+      return "";
+    }
+
+    switch (format) {
+      case "U":
+        return str.toLocaleUpperCase();
+      case "l":
+        return str.toLocaleLowerCase();
+      default:
+        return str.toLocaleString();
+    }
   },
 
   /**
