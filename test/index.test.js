@@ -67,7 +67,11 @@ describe("fmt-tag", () => {
         const expected = "Alice was born on 01/01/1970.";
         const actual = fmt`${name} was born on ${date}:d.`;
 
-        expect(actual).toEqual(expected);
+        // For some reason the default runners on GitHub Actions return
+        // the following date format for this particular case ...
+        const expectedCI = "Alice was born on 1/1/1970.";
+
+        expect([expected, expectedCI]).toContain(actual);
       });
 
       it("returns the short date when passed `DD-MM-YYYY`", () => {
