@@ -1,4 +1,3 @@
-// TODO: Add more options, such as Dates
 // TODO: Add more options to string formatter like uppercase, capitalize, kebab-case, ...
 // TODO: Take care of edge cases (e.g. trying to format a string as a number, ...)
 // TODO: memoize Intl.NumberFormat() formatters
@@ -69,6 +68,17 @@ const formatters: Record<string, Function> = {
       minimumFractionDigits: Number(digits) || 0,
       maximumFractionDigits: Number(digits) || 0,
     }).format(Number(str));
+  },
+
+  /**
+   * RelativeTime formatter
+   * @param str
+   */
+  r(str: string, unit: Intl.RelativeTimeFormatUnit): string {
+    return new Intl.RelativeTimeFormat(locale, { numeric: "auto" }).format(
+      Number(str),
+      unit
+    );
   },
 
   /**

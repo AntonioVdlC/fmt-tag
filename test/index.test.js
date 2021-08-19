@@ -127,6 +127,18 @@ describe("fmt-tag", () => {
       });
     });
 
+    describe(":r", () => {
+      it("returns the relative time correctly", () => {
+        const name = "Alice";
+        const time = -1;
+
+        const expected = "I had lunch with Alice last week!";
+        const actual = fmt`I had lunch with ${name} ${time}:r(weeks)!`;
+
+        expect(actual).toEqual(expected);
+      });
+    });
+
     describe(":s", () => {
       it("correctly formats string values", () => {
         const name = "Alice";
