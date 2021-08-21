@@ -5,6 +5,26 @@ describe(":n", () => {
     fmt.use("en-UK");
   });
 
+  it("correctly formats number values (integer - round down)", () => {
+    const name = "Alice";
+    const number = 42.42;
+
+    const expected = "Alice has 42 oranges!";
+    const actual = fmt`${name}:s has ${number}:n oranges!`;
+
+    expect(actual).toEqual(expected);
+  });
+
+  it("correctly formats number values (integer - round up)", () => {
+    const name = "Alice";
+    const number = 42.52;
+
+    const expected = "Alice has 43 oranges!";
+    const actual = fmt`${name}:s has ${number}:n oranges!`;
+
+    expect(actual).toEqual(expected);
+  });
+
   it("correctly formats number values (with 2 digits)", () => {
     const name = "Alice";
     const number = 42;
