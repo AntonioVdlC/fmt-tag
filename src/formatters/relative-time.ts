@@ -15,7 +15,7 @@ function createRelativeTimeFormatter(
   return function r(str: string, unit: Intl.RelativeTimeFormatUnit): string {
     const number = Number(str);
 
-    if (!str || isNaN(number)) {
+    if (isNaN(number)) {
       return "";
     }
 

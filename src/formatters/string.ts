@@ -13,17 +13,17 @@ function createStringFormatter(
    * @returns
    */
   return function s(str: string, format: string | null): string {
-    if (str == null || !String(str)) {
+    if (str == null) {
       return "";
     }
 
     switch (format) {
       case "U":
-        return str.toLocaleUpperCase(locale);
+        return String(str).toLocaleUpperCase(locale);
       case "l":
-        return str.toLocaleLowerCase(locale);
+        return String(str).toLocaleLowerCase(locale);
       default:
-        return str.toLocaleString();
+        return String(str).toLocaleString();
     }
   };
 }

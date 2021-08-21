@@ -34,7 +34,7 @@ describe(":s", () => {
     expect(actual).toEqual(expected);
   });
 
-  it("returns an lowercase string when passed `U`", () => {
+  it("returns an lowercase string when passed `l`", () => {
     const name = "Alice";
 
     const expected = "Hello, alice!";

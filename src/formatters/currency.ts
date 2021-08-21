@@ -17,7 +17,7 @@ function createCurrencyFormatter(
   return function c(str: string, currency: string): string {
     const number = Number(str);
 
-    if (!str || isNaN(number)) {
+    if (isNaN(number)) {
       return "";
     }
     if (!currency) {

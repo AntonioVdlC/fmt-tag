@@ -17,7 +17,7 @@ function createNumericFormatter(
   return function n(str: string, digits: string): string {
     const number = Number(str);
 
-    if (!str || isNaN(number)) {
+    if (isNaN(number)) {
       return "";
     }
 
