@@ -1,4 +1,3 @@
-// TODO: Take care of edge cases (e.g. trying to format a string as a number, ...)
 // TODO: allow for user-created formatters
 // TODO: interpolate from left to right to allow for dynamic formatter options?
 

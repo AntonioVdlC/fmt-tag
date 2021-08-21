@@ -1,3 +1,5 @@
+import isValidDate from "../utils/is-valid-date";
+
 /**
  * Factory to create Date formatter
  * @param locale
@@ -15,6 +17,12 @@ function createDateFormatter(
    * @returns
    */
   return function d(str: string, format: string): string {
+    const date = new Date(str);
+
+    if (!isValidDate(date)) {
+      return "";
+    }
+
     if (!memo[format]) {
       let options: Intl.DateTimeFormatOptions | null;
       switch (format) {
@@ -40,7 +48,7 @@ function createDateFormatter(
         : new Intl.DateTimeFormat();
     }
 
-    return memo[format].format(new Date(str));
+    return memo[format].format(date);
   };
 }
 

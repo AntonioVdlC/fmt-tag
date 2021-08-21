@@ -13,11 +13,17 @@ function createRelativeTimeFormatter(
    * @param str
    */
   return function r(str: string, unit: Intl.RelativeTimeFormatUnit): string {
+    const number = Number(str);
+
+    if (!str || isNaN(number)) {
+      return "";
+    }
+
     if (!memo["auto"]) {
       memo["auto"] = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
     }
 
-    return memo["auto"].format(Number(str), unit);
+    return memo["auto"].format(number, unit);
   };
 }
 

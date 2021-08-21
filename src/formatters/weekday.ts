@@ -1,3 +1,5 @@
+import isValidDate from "../utils/is-valid-date";
+
 /**
  * Factory to create Time formatter
  * @param locale
@@ -15,6 +17,12 @@ function createWeekdayFormatter(
    * @returns
    */
   return function w(str: string, format: string): string {
+    const date = new Date(str);
+
+    if (!isValidDate(date)) {
+      return "";
+    }
+
     if (!memo[format]) {
       let options: Intl.DateTimeFormatOptions;
       switch (format) {
@@ -30,7 +38,7 @@ function createWeekdayFormatter(
       memo[format] = new Intl.DateTimeFormat(locale, options);
     }
 
-    return memo[format].format(new Date(str));
+    return memo[format].format(date);
   };
 }
 

@@ -15,6 +15,15 @@ function createCurrencyFormatter(
    * @returns
    */
   return function c(str: string, currency: string): string {
+    const number = Number(str);
+
+    if (!str || isNaN(number)) {
+      return "";
+    }
+    if (!currency) {
+      return str;
+    }
+
     if (!memo[currency]) {
       memo[currency] = new Intl.NumberFormat(locale, {
         style: "currency",
@@ -22,7 +31,7 @@ function createCurrencyFormatter(
       });
     }
 
-    return memo[currency].format(Number(str));
+    return memo[currency].format(number);
   };
 }
 

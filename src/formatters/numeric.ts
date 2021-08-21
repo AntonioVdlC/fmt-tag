@@ -15,6 +15,12 @@ function createNumericFormatter(
    * @returns
    */
   return function n(str: string, digits: string): string {
+    const number = Number(str);
+
+    if (!str || isNaN(number)) {
+      return "";
+    }
+
     if (!memo[digits]) {
       memo[digits] = new Intl.NumberFormat(locale, {
         minimumFractionDigits: Number(digits) || 0,
@@ -22,7 +28,7 @@ function createNumericFormatter(
       });
     }
 
-    return memo[digits].format(Number(str));
+    return memo[digits].format(number);
   };
 }
 

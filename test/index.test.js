@@ -49,11 +49,29 @@ describe("fmt-tag", () => {
     describe(":c", () => {
       it("correctly formats currencies", () => {
         const name = "Alice";
-        const number = 42;
         const price = 20;
 
-        const expected = "Alice has 42 oranges worth US$20.00!";
-        const actual = fmt`${name}:s has ${number}:n oranges worth ${price}:c(USD)!`;
+        const expected = "Alice has oranges worth US$20.00!";
+        const actual = fmt`${name}:s has oranges worth ${price}:c(USD)!`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns an empty string if value passed cannot be transformed to a Number", () => {
+        const number = "some text";
+
+        const expected = "";
+        const actual = fmt`${number}:c(USD)`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns an the interpolation if no currency passed", () => {
+        const name = "Alice";
+        const price = 20;
+
+        const expected = "Alice has oranges worth 20!";
+        const actual = fmt`${name}:s has oranges worth ${price}:c!`;
 
         expect(actual).toEqual(expected);
       });
@@ -113,6 +131,15 @@ describe("fmt-tag", () => {
 
         expect(actual).toEqual(expected);
       });
+
+      it("returns an empty string if value passed cannot be transformed to a valid Date", () => {
+        const date = new Date("some text");
+
+        const expected = "";
+        const actual = fmt`${date}:d`;
+
+        expect(actual).toEqual(expected);
+      });
     });
 
     describe(":n", () => {
@@ -125,6 +152,15 @@ describe("fmt-tag", () => {
 
         expect(actual).toEqual(expected);
       });
+
+      it("returns an empty string if value passed cannot be transformed to a Number", () => {
+        const number = "some text";
+
+        const expected = "";
+        const actual = fmt`${number}:n(2)`;
+
+        expect(actual).toEqual(expected);
+      });
     });
 
     describe(":r", () => {
@@ -134,6 +170,15 @@ describe("fmt-tag", () => {
 
         const expected = "I had lunch with Alice last week!";
         const actual = fmt`I had lunch with ${name} ${time}:r(weeks)!`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns an empty string if value passed cannot be transformed to a Number", () => {
+        const number = "some text";
+
+        const expected = "";
+        const actual = fmt`${number}:r(days)`;
 
         expect(actual).toEqual(expected);
       });
@@ -250,6 +295,15 @@ describe("fmt-tag", () => {
 
         expect(actual).toEqual(expected);
       });
+
+      it("returns an empty string if value passed cannot be transformed to a valid Date", () => {
+        const date = new Date("some text");
+
+        const expected = "";
+        const actual = fmt`${date}:t(HH:mm)`;
+
+        expect(actual).toEqual(expected);
+      });
     });
 
     describe(":w", () => {
@@ -279,6 +333,15 @@ describe("fmt-tag", () => {
 
         const expected = "Alice was born on a Thu.";
         const actual = fmt`${name} was born on a ${date}:w(WD).`;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it("returns an empty string if value passed cannot be transformed to a valid Date", () => {
+        const date = new Date("some text");
+
+        const expected = "";
+        const actual = fmt`${date}:w`;
 
         expect(actual).toEqual(expected);
       });
