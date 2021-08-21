@@ -6,6 +6,8 @@
 function createCurrencyFormatter(
   locale: string | undefined
 ): (str: string, currency: string) => string {
+  const memo: Record<string, Intl.NumberFormat> = {};
+
   /**
    * Currency formatter
    * @param str
@@ -13,10 +15,14 @@ function createCurrencyFormatter(
    * @returns
    */
   return function c(str: string, currency: string): string {
-    return new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency,
-    }).format(Number(str));
+    if (!memo[currency]) {
+      memo[currency] = new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency,
+      });
+    }
+
+    return memo[currency].format(Number(str));
   };
 }
 

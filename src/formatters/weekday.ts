@@ -6,6 +6,8 @@
 function createWeekdayFormatter(
   locale: string | undefined
 ): (str: string, format: string) => string {
+  const memo: Record<string, Intl.DateTimeFormat> = {};
+
   /**
    * Weekday formatter
    * @param str
@@ -13,23 +15,22 @@ function createWeekdayFormatter(
    * @returns
    */
   return function w(str: string, format: string): string {
-    let weekdayFormatter;
-    switch (format) {
-      case "WD":
-        weekdayFormatter = new Intl.DateTimeFormat(locale, {
-          weekday: "short",
-        });
-        break;
+    if (!memo[format]) {
+      let options: Intl.DateTimeFormatOptions;
+      switch (format) {
+        case "WD":
+          options = { weekday: "short" };
+          break;
+        case "WWDD":
+        default:
+          options = { weekday: "long" };
+          break;
+      }
 
-      case "WWDD":
-      default:
-        weekdayFormatter = new Intl.DateTimeFormat(locale, {
-          weekday: "long",
-        });
-        break;
+      memo[format] = new Intl.DateTimeFormat(locale, options);
     }
 
-    return weekdayFormatter.format(new Date(str));
+    return memo[format].format(new Date(str));
   };
 }
 

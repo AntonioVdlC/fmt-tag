@@ -6,6 +6,8 @@
 function createDateFormatter(
   locale: string | undefined
 ): (str: string, format: string) => string {
+  const memo: Record<string, Intl.DateTimeFormat> = {};
+
   /**
    * Date formatter
    * @param str
@@ -13,34 +15,32 @@ function createDateFormatter(
    * @returns
    */
   return function d(str: string, format: string): string {
-    let dateFormatter;
-    switch (format) {
-      case "ddd-mmm-YYYY":
-        dateFormatter = new Intl.DateTimeFormat(locale, {
-          dateStyle: "full",
-        });
-        break;
-      case "DD-mmm-YYYY":
-        dateFormatter = new Intl.DateTimeFormat(locale, {
-          dateStyle: "long",
-        });
-        break;
-      case "DD-mm-YYYY":
-        dateFormatter = new Intl.DateTimeFormat(locale, {
-          dateStyle: "medium",
-        });
-        break;
-      case "DD-MM-YYYY":
-        dateFormatter = new Intl.DateTimeFormat(locale, {
-          dateStyle: "short",
-        });
-        break;
-      default:
-        dateFormatter = new Intl.DateTimeFormat();
-        break;
+    if (!memo[format]) {
+      let options: Intl.DateTimeFormatOptions | null;
+      switch (format) {
+        case "ddd-mmm-YYYY":
+          options = { dateStyle: "full" };
+          break;
+        case "DD-mmm-YYYY":
+          options = { dateStyle: "long" };
+          break;
+        case "DD-mm-YYYY":
+          options = { dateStyle: "medium" };
+          break;
+        case "DD-MM-YYYY":
+          options = { dateStyle: "short" };
+          break;
+        default:
+          options = null;
+          break;
+      }
+
+      memo[format] = options
+        ? new Intl.DateTimeFormat(locale, options)
+        : new Intl.DateTimeFormat();
     }
 
-    return dateFormatter.format(new Date(str));
+    return memo[format].format(new Date(str));
   };
 }
 

@@ -6,50 +6,42 @@
 function createTimeFormatter(
   locale: string | undefined
 ): (str: string, format: string) => string {
+  const memo: Record<string, Intl.DateTimeFormat> = {};
+
   /**
    * Time formatter
    * @param str
    * @param format
    */
   return function t(str: string, format: string): string {
-    let timeFormatter;
-    switch (format) {
-      case "HH:mm:ss TZ+":
-        timeFormatter = new Intl.DateTimeFormat(locale, {
-          timeStyle: "full",
-        });
-        break;
-      case "HH:mm:ss TZ":
-        timeFormatter = new Intl.DateTimeFormat(locale, {
-          timeStyle: "long",
-        });
-        break;
-      case "HH:mm:ss aa":
-        timeFormatter = new Intl.DateTimeFormat(locale, {
-          timeStyle: "medium",
-          hour12: true,
-        });
-        break;
-      case "HH:mm:ss":
-        timeFormatter = new Intl.DateTimeFormat(locale, {
-          timeStyle: "medium",
-        });
-        break;
-      case "HH:mm aa":
-        timeFormatter = new Intl.DateTimeFormat(locale, {
-          timeStyle: "short",
-          hour12: true,
-        });
-        break;
-      case "HH:mm":
-      default:
-        timeFormatter = new Intl.DateTimeFormat(locale, {
-          timeStyle: "short",
-        });
-        break;
+    if (!memo[format]) {
+      let options: Intl.DateTimeFormatOptions;
+      switch (format) {
+        case "HH:mm:ss TZ+":
+          options = { timeStyle: "full" };
+          break;
+        case "HH:mm:ss TZ":
+          options = { timeStyle: "long" };
+          break;
+        case "HH:mm:ss aa":
+          options = { timeStyle: "medium", hour12: true };
+          break;
+        case "HH:mm:ss":
+          options = { timeStyle: "medium" };
+          break;
+        case "HH:mm aa":
+          options = { timeStyle: "short", hour12: true };
+          break;
+        case "HH:mm":
+        default:
+          options = { timeStyle: "short" };
+          break;
+      }
+
+      memo[format] = new Intl.DateTimeFormat(locale, options);
     }
 
-    return timeFormatter.format(new Date(str));
+    return memo[format].format(new Date(str));
   };
 }
 
