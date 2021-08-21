@@ -13,7 +13,7 @@ function createStringFormatter(
    * @returns
    */
   return function s(str: string, format: string | null): string {
-    if (!str) {
+    if (str == null || !String(str)) {
       return "";
     }
 
