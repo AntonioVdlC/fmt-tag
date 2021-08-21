@@ -1,5 +1,4 @@
 // TODO: allow for user-created formatters
-// TODO: interpolate from left to right to allow for dynamic formatter options?
 
 import createFormatters from "./formatters/create";
 import extractFormatOption from "./utils/extract-format-option";
@@ -19,17 +18,31 @@ let formatters = createFormatters(locale);
  */
 function fmt(literals: TemplateStringsArray, ...substs: string[]): string {
   let str = "";
-  for (let i = 0, l = literals.length; i < l; i++) {
-    str += literals[i].replace(fmtRegex, "");
+
+  // We iterate backwards to allow for dynamic hints (`option`) in formats,
+  // for example currency depending on some `country` variable.
+  for (let i = substs.length - 1; i >= 0; i--) {
+    // We can always look up `i + 1` because there is always one more literal
+    // than there are interpolations in a template literal
+    str = literals[i + 1] + str;
 
     const { format, option } = extractFormatOption(
-      i + 1 < l ? literals[i + 1] : "",
+      // Here we need to pass the whole string to date because we need
+      // the interpolations that have occured so far in case there are any
+      // dynamic hints.
+      str,
       fmtRegex,
       Object.keys(formatters)
     );
 
-    str += formatters[format](substs[i], option);
+    // Don't forget to remove the format hints!
+    // We do this here after extracting the format hint and option.
+    str = formatters[format](substs[i], option) + str.replace(fmtRegex, "");
   }
+
+  // After we are done with all the interpolatinos, prepend the first literal
+  str = literals[0] + str;
+
   return str;
 }
 

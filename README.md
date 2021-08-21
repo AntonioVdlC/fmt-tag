@@ -40,6 +40,17 @@ const money = 20;
 console.log(fmt`${name} has ${money}:c(USD) in her pocket!`);
 // "Alice has $20 in her pocket!"
 ```
+
+Hints can also be dynamic, for example displaying a specific currency based on a `country` variable, as follows:
+```js
+const name = "Alice";
+const money = 20;
+const country = "UK";
+
+console.log(fmt`${name} has ${money}:c(${country === "UK" ? "GBP" : "USD"}) in her pocket!`);
+// "Alice has £20 in her pocket!"
+```
+
 > The formatting uses the host's default language settings. You can also pass in a specific locale via `fmt.use(locale)`.
 
 ### fmt.use(locale: string)

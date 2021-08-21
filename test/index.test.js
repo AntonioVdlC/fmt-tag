@@ -58,6 +58,31 @@ describe("formatters", () => {
       expect(actual).toEqual(expected);
     });
 
+    it("correctly formats currencies (dynamic option)", () => {
+      const name = "Alice";
+      const price = 20;
+      const currencyGBP = "GBP";
+      const currencyUSD = "USD";
+
+      let country;
+
+      country = "UK";
+      const expectedGBP = "Now Alice has oranges worth £20.00!";
+      const actualGBP = fmt`Now ${name}:s has oranges worth ${price}:c(${
+        country === "UK" ? currencyGBP : currencyUSD
+      })!`;
+
+      expect(actualGBP).toEqual(expectedGBP);
+
+      country = "US";
+      const expectedUSD = "Now Alice has oranges worth US$20.00!";
+      const actualUSD = fmt`Now ${name}:s has oranges worth ${price}:c(${
+        country === "UK" ? currencyGBP : currencyUSD
+      })!`;
+
+      expect(actualUSD).toEqual(expectedUSD);
+    });
+
     it("returns an empty string if value passed cannot be transformed to a Number", () => {
       const number = "some text";
 
@@ -246,6 +271,15 @@ describe("formatters", () => {
 
     it("returns an empty string if value passed is an empty string", () => {
       const string = "";
+
+      const expected = "";
+      const actual = fmt`${string}:s`;
+
+      expect(actual).toEqual(expected);
+    });
+
+    it("returns an empty string if value passed is null", () => {
+      const string = null;
 
       const expected = "";
       const actual = fmt`${string}:s`;
