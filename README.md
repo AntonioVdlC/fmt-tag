@@ -89,7 +89,31 @@ There are a few formatters available (more to come!).
 | Key | Options |
 | --- | --- |
 | `:t` | - `:t(HH:mm)` => `06:56` <br/>- `:t(HH:mm aa)` => `06:56 am` <br/>- `:t(HH:mm:ss)` => `06:56:07` <br/>- `:t(HH:mm:ss aa)` => `06:56:07 am` <br/>- `:t(HH:mm:ss TZ)` => `06:56:07 UTC` <br/>- `:t(HH:mm:ss TZ+)` => `06:56:07 Coordinated Universal Time` |
-  
+
+### Custom formatters
+
+Custom formatters can be registerd using `fmt.register(tag, fn)`. This allows for user-created formatters that can then be used as the pre-existing formatters. 
+
+To avoid any potential conflicts or overrides, custom formatters need to have an uppercase tag, whereas pre-defined formatters always use a lowercase character.
+
+```js
+const tag = "V";
+const fn = function (locale) {
+  return function (str, option) {
+    // Yes, you can use other formatters in custom formatters!
+    return fmt`${str} version ${option}:n(1)`;
+  };
+};
+
+fmt.register(tag, fn);
+
+const name = "Alice";
+
+console.log(fmt`Welcome to ${name}:V(3)!`);
+// "Welcome to Alice version 3.0!"
+```
+> Note that registering multiple custom formatters with the same tag will override previously registered ones.
+
 ## Acknowledgements
 Thanks to Jack Hsu and his article on implementing an internationalization library using template literals (https://jaysoo.ca/2014/03/20/i18n-with-es2015-template-literals/) for the inspiration!
 

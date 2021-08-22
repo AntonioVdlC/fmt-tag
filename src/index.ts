@@ -1,5 +1,3 @@
-// TODO: Document user-created formatter in README.md
-
 import { addUserFormatter, generateFormatters } from "./formatters/index";
 import extractFormatOption from "./utils/extract-format-option";
 
