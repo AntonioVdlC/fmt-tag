@@ -1,14 +1,28 @@
-// TODO: allow for user-created formatters
+// TODO: Refactor this file
+// TODO: Document user-created formatter in README.md
 
 import createFormatters from "./formatters/create";
 import extractFormatOption from "./utils/extract-format-option";
 
-const fmtRegex = /^:([a-z])(\((.+)\))?/;
+const fmtRegex = /^:([a-zA-Z])(\((.+)\))?/;
 
 // Locale used when formatting template literals;
 // defaults to host language settings
 let locale: string | undefined;
-let formatters = createFormatters(locale);
+
+// Map to keep track of user-created hints and formatters
+const userFormatters: Record<
+  string,
+  (
+    locale: string | undefined
+  ) => (str: string, option: string | undefined) => string
+> = {};
+
+// Map of available formatters
+let formatters = {
+  ...createUserFormatters(locale),
+  ...createFormatters(locale),
+};
 
 /**
  * Format a template literal
@@ -52,9 +66,66 @@ function fmt(literals: TemplateStringsArray, ...substs: string[]): string {
  * @param _locale
  */
 fmt.use = function (_locale: string): void {
-  // TODO: Validate locale?
   locale = _locale;
-  formatters = createFormatters(locale);
+
+  formatters = {
+    ...createUserFormatters(locale),
+    ...createFormatters(locale),
+  };
+};
+
+/**
+ * Utility function to generate user-creacted formatters
+ * @param locale
+ * @returns
+ */
+function createUserFormatters(
+  locale: string | undefined
+): Record<string, Function> {
+  return Object.keys(userFormatters).reduce(
+    (obj: Record<string, Function>, key: string) => {
+      obj[key] = userFormatters[key](locale);
+      return obj;
+    },
+    {}
+  );
+}
+
+/**
+ * Registers a new formatter
+ * @param tag
+ * @param fn
+ */
+fmt.register = function (
+  tag: string,
+  fn: (
+    locale: string | undefined
+  ) => (str: string, option: string | undefined) => string
+): void {
+  if (tag.length !== 1) {
+    throw new Error(
+      `User-created hint tags should contain a single character. Received ${tag.length} characters ("${tag}").`
+    );
+  }
+
+  if (!/[A-Z]/.test(tag)) {
+    throw new Error(
+      `User-created hint tags should be a capital letter /[A-Z]/. Received "${tag}".`
+    );
+  }
+
+  if (!(fn instanceof Function)) {
+    throw new Error(
+      `User-created hint tags should have an accompanying factory function.`
+    );
+  }
+
+  userFormatters[tag] = fn;
+
+  formatters = {
+    ...createUserFormatters(locale),
+    ...createFormatters(locale),
+  };
 };
 
 export default fmt;

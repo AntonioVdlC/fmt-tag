@@ -9,6 +9,10 @@ describe("fmt-tag", () => {
     expect(typeof fmt.use).toBe("function");
   });
 
+  it("has a .register() field which is a function", () => {
+    expect(typeof fmt.register).toBe("function");
+  });
+
   it("correctly does string interpolation in template literals", () => {
     const name = "Alice";
     const number = 42;
@@ -19,7 +23,7 @@ describe("fmt-tag", () => {
     expect(actual).toEqual(expected);
   });
 
-  describe(".use(locale)", () => {
+  describe(".use()", () => {
     it("properly set a user inputed locale", () => {
       const name = "Alice";
       const number = 42;
@@ -38,6 +42,36 @@ describe("fmt-tag", () => {
       const actualENUS = fmt`${name}:s has ${number}:n oranges worth ${price}:c(USD)!`;
 
       expect(actualENUS).toEqual(expectedENUS);
+    });
+  });
+
+  describe(".register()", () => {
+    it("throws when passed a tag of length !== 1", () => {
+      expect(() => fmt.register("text", () => {})).toThrow();
+    });
+    it("throws when passed a tag that is not in /[A-Z]/", () => {
+      expect(() => fmt.register("a", () => {})).toThrow();
+    });
+    it("throws when not passed a function as second argument", () => {
+      expect(() => fmt.register("A", 42)).toThrow();
+    });
+
+    it("registers a user-defined formatter", () => {
+      const tag = "Z";
+      const fn = function (locale) {
+        return function (str, option) {
+          return fmt`${str} (in ${locale}) ZZZZ ${option}:n(2)`;
+        };
+      };
+
+      fmt.register(tag, fn);
+
+      const name = "Alice";
+
+      const expected = "Hello, Alice (in en-US) ZZZZ 3.00!";
+      const actual = fmt`Hello, ${name}:Z(3)!`;
+
+      expect(actual).toEqual(expected);
     });
   });
 });
