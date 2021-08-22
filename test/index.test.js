@@ -55,6 +55,9 @@ describe("fmt-tag", () => {
     it("throws when not passed a function as second argument", () => {
       expect(() => fmt.register("A", 42)).toThrow();
     });
+    it("throws when not passed a high-order function as second argument", () => {
+      expect(() => fmt.register("A", () => {})).toThrow();
+    });
 
     it("registers a user-defined formatter", () => {
       const tag = "Z";
