@@ -5,14 +5,14 @@
  */
 function createStringFormatter(
   locale: string | undefined
-): (str: string, format: string | null) => string {
+): (str: string, format: string | undefined) => string {
   /**
    * String formatter
    * @param str
    * @param format
    * @returns
    */
-  return function s(str: string, format: string | null): string {
+  return function s(str: string, format: string | undefined): string {
     if (str == null) {
       return "";
     }

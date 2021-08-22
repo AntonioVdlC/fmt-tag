@@ -5,7 +5,7 @@
  */
 function createNumericFormatter(
   locale: string | undefined
-): (str: string, digits: string) => string {
+): (str: string, digits: string | undefined) => string {
   const memo: Record<string, Intl.NumberFormat> = {};
 
   /**
@@ -14,21 +14,22 @@ function createNumericFormatter(
    * @param digits
    * @returns
    */
-  return function n(str: string, digits: string): string {
+  return function n(str: string, digits: string | undefined): string {
     const number = Number(str);
+    const key = digits ? String(digits) : 0;
 
     if (isNaN(number)) {
       return "";
     }
 
-    if (!memo[digits]) {
-      memo[digits] = new Intl.NumberFormat(locale, {
+    if (!memo[key]) {
+      memo[key] = new Intl.NumberFormat(locale, {
         minimumFractionDigits: Number(digits) || 0,
         maximumFractionDigits: Number(digits) || 0,
       });
     }
 
-    return memo[digits].format(number);
+    return memo[key].format(number);
   };
 }
 

@@ -7,7 +7,7 @@ import isValidDate from "../utils/is-valid-date";
  */
 function createTimeFormatter(
   locale: string | undefined
-): (str: string, format: string) => string {
+): (str: string, format: string | undefined) => string {
   const memo: Record<string, Intl.DateTimeFormat> = {};
 
   /**
@@ -15,14 +15,15 @@ function createTimeFormatter(
    * @param str
    * @param format
    */
-  return function t(str: string, format: string): string {
+  return function t(str: string, format: string | undefined): string {
     const date = new Date(str);
+    const key = String(format);
 
     if (!isValidDate(date)) {
       return "";
     }
 
-    if (!memo[format]) {
+    if (!memo[key]) {
       let options: Intl.DateTimeFormatOptions;
       switch (format) {
         case "HH:mm:ss TZ+":
@@ -46,10 +47,10 @@ function createTimeFormatter(
           break;
       }
 
-      memo[format] = new Intl.DateTimeFormat(locale, options);
+      memo[key] = new Intl.DateTimeFormat(locale, options);
     }
 
-    return memo[format].format(date);
+    return memo[key].format(date);
   };
 }
 
