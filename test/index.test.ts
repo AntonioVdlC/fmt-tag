@@ -1,4 +1,6 @@
-import fmt from "../src/index.ts";
+import { beforeAll, describe, it, expect } from "vitest";
+
+import fmt from "../src";
 
 describe("fmt-tag", () => {
   it("is a function", () => {
@@ -47,22 +49,26 @@ describe("fmt-tag", () => {
 
   describe(".register()", () => {
     it("throws when passed a tag of length !== 1", () => {
+      // @ts-expect-error
       expect(() => fmt.register("text", () => {})).toThrow();
     });
     it("throws when passed a tag that is not in /[A-Z]/", () => {
+      // @ts-expect-error
       expect(() => fmt.register("a", () => {})).toThrow();
     });
     it("throws when not passed a function as second argument", () => {
+      // @ts-expect-error
       expect(() => fmt.register("A", 42)).toThrow();
     });
     it("throws when not passed a high-order function as second argument", () => {
+      // @ts-expect-error
       expect(() => fmt.register("A", () => {})).toThrow();
     });
 
     it("registers a user-defined formatter", () => {
       const tag = "Z";
-      const fn = function (locale) {
-        return function (str, option) {
+      const fn = function (locale?: string) {
+        return function (str: string, option?: string): string {
           return fmt`${str} (in ${locale}) ZZZZ ${option}:n(2)`;
         };
       };

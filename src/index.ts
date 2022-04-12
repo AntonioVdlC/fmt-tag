@@ -1,4 +1,4 @@
-import { addUserFormatter, generateFormatters } from "./formatters/index";
+import { addUserFormatter, generateFormatters } from "./formatters";
 import extractFormatOption from "./utils/extract-format-option";
 
 const fmtRegex = /^:([a-zA-Z])(\((.+)\))?/;
@@ -16,7 +16,10 @@ let formatters = generateFormatters(locale);
  * @param substs
  * @returns
  */
-function fmt(literals: TemplateStringsArray, ...substs: string[]): string {
+function fmt(
+  literals: TemplateStringsArray,
+  ...substs: Array<string | number | Date | undefined | null>
+): string {
   let str = "";
 
   // We iterate backwards to allow for dynamic hints (`option`) in formats,
